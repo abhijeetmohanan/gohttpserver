@@ -1,20 +1,30 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"io"
-	"net/http"
 	"log"
+	"net/http"
+	"os"
 )
 
-func getRoot(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("got / request\n")
-	io.WriteString(w, "This is my website!\n")
-}
+func groot() http.Handler {
+	handleFunc := func(w http.ResponseWriter, r *http.Request) {
+		hostname, err := os.Hostname()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		resp := "Hostname = " + hostname
+		w.Write([]byte(resp))
 
+	}
+	// pending calculate inbound request
+	return http.HandlerFunc(handleFunc)
+
+}
 func main() {
-	http.Handle("/", getRoot)
+
+	http.Handle("/", groot())
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
 }
