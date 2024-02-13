@@ -1,30 +1,39 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
+
+var hits int = 0
+
+func counter(count *int) {
+	*count = *count + 1
+}
 
 func groot() http.Handler {
 	handleFunc := func(w http.ResponseWriter, r *http.Request) {
 		hostname, err := os.Hostname()
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Print(err)
 		}
-		resp := "Hostname = " + hostname
+		resp := "Hostname = " + hostname + "Hits on Server: " + strconv.Itoa(hits)
 		w.Write([]byte(resp))
-
+		counter(&hits)
+		log.Printf("Hostname = %s : Hit Count : %d", hostname, hits)
 	}
-	// pending calculate inbound request
+
 	return http.HandlerFunc(handleFunc)
 
 }
 func main() {
 
+	// each request is printing twice 
+
 	http.Handle("/", groot())
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Print("Starting Server at 0.0.0.0:8080")
+	http.ListenAndServe(":8080", nil)
 
 }
