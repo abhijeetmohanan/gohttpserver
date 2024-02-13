@@ -19,9 +19,9 @@ func groot() http.Handler {
 		if err != nil {
 			log.Print(err)
 		}
+		counter(&hits)
 		resp := "Hostname = " + hostname + "Hits on Server: " + strconv.Itoa(hits)
 		w.Write([]byte(resp))
-		counter(&hits)
 		log.Printf("Hostname = %s : Hit Count : %d", hostname, hits)
 	}
 
@@ -33,7 +33,7 @@ func main() {
 	// each request is printing twice 
 
 	http.Handle("/", groot())
-	log.Print("Starting Server at 0.0.0.0:8080")
-	http.ListenAndServe(":8080", nil)
+	log.Print("Starting Server at 0.0.0.0:30000")
+	log.Fatal(http.ListenAndServe(":30000", nil))
 
 }
